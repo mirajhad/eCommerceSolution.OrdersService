@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public record OrderAddedRequest(Guid UserID, DateTime OrderDate, List<OrderItemAddRequest> OrderItems)
+    public record OrderAddRequest(Guid UserID, DateTime OrderDate, List<OrderItemAddRequest> OrderItems)
     {
-        public OrderAddedRequest(): this(default, default, default)
+        public OrderAddRequest() : this(default, default, default)
         {
-
         }
     }
 }

@@ -66,7 +66,7 @@ namespace OrdersMicroservice.API.ApiControllers
 
         //POST api/Orders
         [HttpPost]
-        public async Task<IActionResult> Post(OrderAddedRequest orderAddRequest)
+        public async Task<IActionResult> Post(OrderAddRequest orderAddRequest)
         {
             if (orderAddRequest == null)
             {
@@ -77,7 +77,7 @@ namespace OrdersMicroservice.API.ApiControllers
 
             if (orderResponse == null)
             {
-                return Problem("Error in adding product");
+                return Problem("Error in adding order");
             }
 
 
@@ -103,7 +103,7 @@ namespace OrdersMicroservice.API.ApiControllers
 
             if (orderResponse == null)
             {
-                return Problem("Error in adding product");
+                return Problem("Error in updating order");
             }
 
 
@@ -124,11 +124,12 @@ namespace OrdersMicroservice.API.ApiControllers
 
             if (!isDeleted)
             {
-                return Problem("Error in adding product");
+                return Problem("Error in deleting order");
             }
 
             return Ok(isDeleted);
         }
     }
+
 }
-  
+

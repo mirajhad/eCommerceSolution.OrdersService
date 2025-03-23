@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Validators
 {
-    public class OrderAddRequestValidator: AbstractValidator<OrderAddedRequest>
+    public class OrderAddRequestValidator: AbstractValidator<OrderAddRequest>
     {
         public OrderAddRequestValidator() 
         {
