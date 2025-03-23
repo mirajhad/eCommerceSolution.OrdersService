@@ -9,7 +9,8 @@
         "MONGODB_PORT": "27017"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5102"
+      "applicationUrl": "http://localhost:5102",
+      "launchUrl": "swagger"
     },
     "https": {
       "commandName": "Project",
@@ -20,7 +21,8 @@
         "MONGODB_PORT": "27017"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7115;http://localhost:5102"
+      "applicationUrl": "https://localhost:7115;http://localhost:5102",
+      "launchUrl": "swagger"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",
