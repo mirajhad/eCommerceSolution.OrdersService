@@ -5,10 +5,26 @@ services:
       context: .
       dockerfile: OrdersMicroservice.API/Dockerfile
     environment:
-     - MONGODB_HOST=localhost
+     - MONGODB_HOST=mongodb-container
      - MONGODB_PORT=27017
      - MONGODB_DATABASE=OrdersDatabase
      - UsersMicroserviceName=localhost
      - UsersMicroservicePort=5050
     ports:
      - "7000:8080"
+    networks:
+     - orders-mongodb-network
+  
+  mongodb-container:
+   image: mongo:latest  
+   ports:
+    - "27017:27017"
+   volumes:
+    - ../mongodb-init:/docker-entrypoint-initdb.d
+   networks:
+    - orders-mongodb-network 
+    
+
+networks:
+  orders-mongodb-network:
+    driver: bridge
