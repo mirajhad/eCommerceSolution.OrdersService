@@ -1,0 +1,14 @@
+services:
+  ordersmicroservice.api:
+    image: ordersmicroserviceapi
+    build:
+      context: .
+      dockerfile: OrdersMicroservice.API/Dockerfile
+    environment:
+     - MONGODB_HOST=localhost
+     - MONGODB_PORT=27017
+     - MONGODB_DATABASE=OrdersDatabase
+     - UsersMicroserviceName=localhost
+     - UsersMicroservicePort=5050
+    ports:
+     - "7000:8080"
