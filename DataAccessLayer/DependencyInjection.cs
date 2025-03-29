@@ -21,7 +21,7 @@ namespace DataAccessLayer
             services.AddScoped<IMongoDatabase>(provider =>
             {
                 IMongoClient client = provider.GetRequiredService<IMongoClient>();
-                return client.GetDatabase("OrdersDatabase");
+                return client.GetDatabase(Environment.GetEnvironmentVariable("MONGODB_DATABASE"));
             });
 
             services.AddScoped<IOrdersRepository, OrdersRepository>();

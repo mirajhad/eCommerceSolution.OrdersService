@@ -21,11 +21,18 @@ namespace OrdersMicroservice.API.ApiControllers
 
         //GET: /api/Orders
         [HttpGet]
-        public async Task<IEnumerable<OrderResponse?>> Get()
+        public async Task<ActionResult<IEnumerable<OrderResponse?>>> Get()
         {
-            List<OrderResponse?> orders = await _ordersService.GetOrders();
-            return orders;
+            var orders = await _ordersService.GetOrders();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound("No orders found.");
+            }
+
+            return Ok(orders);
         }
+
 
 
         //GET: /api/Orders/search/orderid/{orderID}
