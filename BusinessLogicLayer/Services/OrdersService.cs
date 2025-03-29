@@ -216,6 +216,33 @@ namespace BusinessLogicLayer.Services
 
 
             IEnumerable<OrderResponse?> orderResponses = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+
+            foreach (OrderResponse? orderResponse in orderResponses)
+            {
+                if (orderResponse == null)
+                {
+                    continue;
+                }
+
+                foreach (OrderItemResponse orderItemResponse in orderResponse.OrderItems)
+                {
+                    ProductDTO? productDTO = await _productsMicroserviceClient.GetProductByProductID(orderItemResponse.ProductID);
+
+                    if (productDTO == null)
+                        continue;
+
+                    _mapper.Map<ProductDTO, OrderItemResponse>(productDTO, orderItemResponse);
+                }
+
+                //TO DO: Load UserPersonName and Email from Users Microservice
+                UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(orderResponse.UserID);
+                if (user != null)
+                {
+                    _mapper.Map<UserDTO, OrderResponse>(user, orderResponse);
+                }
+            }
+
+
             return orderResponses.ToList();
         }
     }
