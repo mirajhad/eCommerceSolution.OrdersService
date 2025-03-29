@@ -12,6 +12,8 @@ services:
      - MONGODB_DATABASE=OrdersDatabase
      - UsersMicroserviceName=users-microservice
      - UsersMicroservicePort=9090
+     - ProductsMicroserviceName=products-microservice
+     - ProductsMicroservicePort=8080
     ports:
      - "7000:8080"
     networks:

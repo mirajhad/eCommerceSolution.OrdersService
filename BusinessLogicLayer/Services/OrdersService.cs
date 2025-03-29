@@ -20,8 +20,9 @@ namespace BusinessLogicLayer.Services
         private readonly IMapper _mapper;
         private IOrdersRepository _ordersRepository;
         private UsersMicroserviceClient _usersMicroserviceClient;
+        private ProductsMicroserviceClient _productsMicroserviceClient;
 
-        public OrdersService(IOrdersRepository ordersRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderItemAddRequest> orderItemAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator, UsersMicroserviceClient usersMicroserviceClient)
+        public OrdersService(IOrdersRepository ordersRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderItemAddRequest> orderItemAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator, UsersMicroserviceClient usersMicroserviceClient, ProductsMicroserviceClient productsMicroserviceClient)
         {
             _orderAddRequestValidator = orderAddRequestValidator;
             _orderItemAddRequestValidator = orderItemAddRequestValidator;
@@ -30,6 +31,7 @@ namespace BusinessLogicLayer.Services
             _mapper = mapper;
             _ordersRepository = ordersRepository;
             _usersMicroserviceClient = usersMicroserviceClient;
+            _productsMicroserviceClient = productsMicroserviceClient;
         }
 
 
@@ -87,6 +89,13 @@ namespace BusinessLogicLayer.Services
             if (addedOrder == null)
             {
                 return null;
+            }
+
+            //Validate the product details using the Products Microservice
+            ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(orderInput.OrderItems.First().ProductID);
+            if (product == null)
+            {
+                throw new ArgumentException("Invalid ProductID");
             }
 
             OrderResponse addedOrderResponse = _mapper.Map<OrderResponse>(addedOrder); //Map addedOrder ('Order' type) into 'OrderResponse' type (it invokes OrderToOrderResponseMappingProfile).
@@ -149,6 +158,13 @@ namespace BusinessLogicLayer.Services
             if (updatedOrder == null)
             {
                 return null;
+            }
+
+            //Validate the product details using the Products Microservice
+            ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(orderInput.OrderItems.First().ProductID);
+            if (product == null)
+            {
+                throw new ArgumentException("Invalid ProductID");
             }
 
             OrderResponse updatedOrderResponse = _mapper.Map<OrderResponse>(updatedOrder); //Map updatedOrder ('Order' type) into 'OrderResponse' type (it invokes OrderToOrderResponseMappingProfile).

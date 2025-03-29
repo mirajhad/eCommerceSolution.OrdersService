@@ -32,4 +32,6 @@ ENV MONGODB_PORT =27017
 ENV MONGODB_DATABASE =OrdersDatabase
 ENV UsersMicroserviceName = localhost
 ENV UsersMicroservicePort = 9090
+ENV ProductsMicroserviceName = localhost
+ENV ProductsMicroservicePort = 8080
 ENTRYPOINT ["dotnet", "OrdersMicroservice.API.dll"]
