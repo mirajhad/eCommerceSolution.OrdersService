@@ -17,7 +17,7 @@ namespace BusinessLogicLayer.Policies
         public IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         {
             AsyncRetryPolicy<HttpResponseMessage> policy = Policy.HandleResult<HttpResponseMessage>(r => r.IsSuccessStatusCode)
-               .WaitAndRetryAsync(retryCount: 5, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(2),
+               .WaitAndRetryAsync(retryCount: 5, sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 onRetry: (outcome, timespan, retryAttempt, context) =>
                 {
                     _logger.LogInformation($"Retry policy{retryAttempt} after {timespan.TotalSeconds}secound");

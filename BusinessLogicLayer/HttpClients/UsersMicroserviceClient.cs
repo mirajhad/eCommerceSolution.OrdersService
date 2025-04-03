@@ -35,7 +35,12 @@ namespace BusinessLogicLayer.HttpClients
             }
             else
             {
-                return null;
+                return new UserDTO(
+                    PersonName: "Temporarily Unavailable",
+                    Email: "Temporarily Unavailable",
+                    Gender: "Temporarily Unavailable",
+                    UserID: Guid.Empty
+                    );
             }
         }
     }
