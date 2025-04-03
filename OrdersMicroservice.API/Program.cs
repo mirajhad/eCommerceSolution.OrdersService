@@ -3,6 +3,7 @@ using BusinessLogicLayer.HttpClients;
 using BusinessLogicLayer.Policies;
 using DataAccessLayer;
 using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 using OrdersMicroservice.API.Middleware;
 using Polly;
 
@@ -35,7 +36,13 @@ builder.Services.AddTransient<IUsersMicroservicePolicies, UsersMicroservicePolic
 builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
-}).AddPolicyHandler( builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy());
+})
+    .AddPolicyHandler( builder.Services.BuildServiceProvider()
+    .GetRequiredService<IUsersMicroservicePolicies>()
+    .GetRetryPolicy())
+    .AddPolicyHandler(
+   builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetCircuitBreakerPolicy()
+  );
 
 
 builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
