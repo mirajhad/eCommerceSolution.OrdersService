@@ -2,6 +2,7 @@
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
+using Polly.Timeout;
 
 
 namespace BusinessLogicLayer.Policies
@@ -41,6 +42,13 @@ namespace BusinessLogicLayer.Policies
                 {
                     _logger.LogInformation($"Retry policy{retryAttempt} after {timespan.TotalSeconds}secound");
                 });
+            return policy;
+        }
+
+        public IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy()
+        {
+            AsyncTimeoutPolicy<HttpResponseMessage> policy =
+                Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMilliseconds(1500));
             return policy;
         }
     }

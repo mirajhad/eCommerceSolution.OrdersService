@@ -7,5 +7,6 @@ namespace BusinessLogicLayer.Policies
     {
         IAsyncPolicy<HttpResponseMessage> GetRetryPolicy();
         IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy();
+        IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy();
     }
 }

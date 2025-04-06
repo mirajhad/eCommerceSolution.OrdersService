@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using Polly.CircuitBreaker;
+using Polly.Timeout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,17 @@ namespace BusinessLogicLayer.HttpClients
                         PersonName: "Temporarily Unavailable",
                         Email: "Temporarily Unavailable",
                         Gender: "Temporarily Unavailable",
+                        UserID: Guid.Empty);
+            }
+
+            catch (TimeoutRejectedException ex)
+            {
+                _logger.LogError(ex, "Timeout occurred while fetching user data. Returning dummy data");
+
+                return new UserDTO(
+                        PersonName: "Temporarily Unavailable (timeout)",
+                        Email: "Temporarily Unavailable (timeout)",
+                        Gender: "Temporarily Unavailable (timeout)",
                         UserID: Guid.Empty);
             }
         }
