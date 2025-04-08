@@ -5,6 +5,7 @@ using Polly.Bulkhead;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -35,7 +36,7 @@ namespace BusinessLogicLayer.HttpClients
                 string cacheKey = $"product:{productID}";
                 string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey);
 
-                if (cachedProduct != null) 
+                if (cachedProduct != null)
                 {
                     ProductDTO? productFromCache = JsonSerializer.Deserialize<ProductDTO>(cachedProduct);
                     return productFromCache;
@@ -46,13 +47,23 @@ namespace BusinessLogicLayer.HttpClients
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    if(response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                    {
+                        ProductDTO? productFromFallback = await response.Content.ReadFromJsonAsync<ProductDTO>();
+
+                        if (productFromFallback == null)
+                        {
+                            throw new NotImplementedException("Fallback policy was not implemented");
+                        }
+                        return productFromFallback;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
                         return null;
                     }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
                     {
-                        throw new HttpRequestException("Bad request", null, System.Net.HttpStatusCode.BadRequest);
+                        throw new HttpRequestException("Bad request", null, HttpStatusCode.BadRequest);
                     }
                     else
                     {
@@ -67,6 +78,14 @@ namespace BusinessLogicLayer.HttpClients
                 {
                     throw new ArgumentException("Invalid Product ID");
                 }
+
+                string productJson = JsonSerializer.Serialize(product);
+                DistributedCacheEntryOptions options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(30))
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(10));
+
+                string cacheKeyToWrite = $"product:{productID}";
+                await _distributedCache.SetStringAsync(cacheKeyToWrite, productJson, options);
 
                 return product;
 

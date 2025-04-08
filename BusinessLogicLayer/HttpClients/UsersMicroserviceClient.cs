@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.DTO;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
@@ -18,22 +19,45 @@ namespace BusinessLogicLayer.HttpClients
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<UsersMicroserviceClient> _logger;
+        private readonly IDistributedCache _distributedCache;
 
-        public UsersMicroserviceClient(HttpClient httpClient, ILogger<UsersMicroserviceClient> logger)
+        public UsersMicroserviceClient(HttpClient httpClient, ILogger<UsersMicroserviceClient> logger, IDistributedCache distributedCache)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _distributedCache = distributedCache;
         }
 
         public async Task<UserDTO?> GetUserByUserID(Guid userID)
         {
             try
             {
+                // Check if the user is in the cache
+                string cacheKeyToRead = $"user:{userID}";
+                string? cachedUser = await _distributedCache.GetStringAsync(cacheKeyToRead);
+
+                if(cachedUser != null)
+                {
+                    UserDTO? userFromCache = JsonSerializer.Deserialize<UserDTO>(cachedUser);
+                    return userFromCache;
+                }
+
                 HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userID}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+                    {
+                        UserDTO? userFromFallback = await response.Content.ReadFromJsonAsync<UserDTO>();
+                        if (userFromFallback == null)
+                        {
+                            throw new NotImplementedException("Fallback policy was not implemented");
+                        }
+                        return userFromFallback;
+                    }
+
+                    else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     {
                         return null;
                     }
@@ -61,6 +85,14 @@ namespace BusinessLogicLayer.HttpClients
                     throw new ArgumentException("Invalid User ID");
                 }
 
+                // Check if the user is in the cache
+
+                string cacheKey = $"user:{userID}";
+                string userJson = JsonSerializer.Serialize(user);
+                DistributedCacheEntryOptions options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
+                await _distributedCache.SetStringAsync(cacheKey, userJson, options);
                 return user;
             }
             catch (BrokenCircuitException ex)
