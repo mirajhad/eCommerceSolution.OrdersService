@@ -35,24 +35,24 @@ namespace BusinessLogicLayer.Policies
         public IAsyncPolicy<HttpResponseMessage> GetFallbackPolicy()
         {
             AsyncFallbackPolicy<HttpResponseMessage> policy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-     .FallbackAsync(async (context) =>
-     {
-         _logger.LogWarning("Fallback triggered: The request failed, returning dummy data");
+            .FallbackAsync(async (context) =>
+            {
+                _logger.LogWarning("Fallback triggered: The request failed, returning dummy data");
 
-         ProductDTO product = new ProductDTO(ProductID: Guid.Empty,
-            ProductName: "Temporarily Unavailable (fallback)",
-            Category: "Temporarily Unavailable (fallback)",
-            UnitPrice: 0,
-            QuantityInStock: 0
-            );
+                ProductDTO product = new ProductDTO(ProductID: Guid.Empty,
+                   ProductName: "Temporarily Unavailable (fallback)",
+                   Category: "Temporarily Unavailable (fallback)",
+                   UnitPrice: 0,
+                   QuantityInStock: 0
+                   );
 
-         var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
-         {
-             Content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json")
-         };
+                    var response = new HttpResponseMessage(System.Net.HttpStatusCode.ServiceUnavailable)
+                    {
+                        Content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json")
+                    };
 
-         return response;
-     });
+                 return response;
+            });
 
             return policy;
         }
