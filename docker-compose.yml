@@ -14,6 +14,8 @@ services:
      - UsersMicroservicePort=9090
      - ProductsMicroserviceName=products-microservice
      - ProductsMicroservicePort=8080
+     - REDIS_HOST=redis
+     - REDIS_PORT=6379
     ports:
      - "7000:8080"
     networks:
@@ -95,6 +97,29 @@ services:
     - ../postgres-init:/docker-entrypoint-initdb.d
    networks:
     - users-postgres-network
+
+  redis:
+   image: redis:latest
+   ports:
+    - "6379:6379"
+   volumes:
+    - d:/source/repos/Microservice/db/redis-cache:/data
+   networks:
+    - ecommerce-network
+ 
+  apigateway:
+   image: apigateway
+   build:
+    context: .
+    dockerfile: ApiGateway/Dockerfile
+   ports:
+    - "4000:8080"
+   networks:
+    - ecommerce-network
+   # depends_on:
+   #  - ordersmicroservice.api
+   #  - products-microservice
+   #  - users-microservice
 
 
 networks:

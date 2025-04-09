@@ -14,7 +14,7 @@
         "ProductsMicroservicePort": "8080"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5102",
+      "applicationUrl": "http://localhost:7000",
       "launchUrl": "swagger"
     },
     "https": {
