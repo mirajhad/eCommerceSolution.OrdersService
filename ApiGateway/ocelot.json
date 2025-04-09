@@ -1,28 +1,39 @@
 {
 	"Routes": [
+		//{
+		//	"UpstreamPathTemplate": "/gateway/Orders/",
+		//	"DownstreamPathTemplate": "/api/Orders",
+		//	"DownstreamHostAndPorts": [
+		//		{
+		//			"Host": "ordersmicroservice.api",
+		//			"Port": 8080
+		//		}
+		//	],
+		//	/* http://localhost:5000/gateway/Orders to http://ordersmicroservice.api:8080/api/Orders */
+		//	"UpstreamHttpMethod": [
+		//		"Get",
+		//		"Post",
+		//		"Options"
+		//	],
+		//	"UpstreamScheme": "http",
+
+		//	"FileCacheOptions": {
+		//		"TtlSeconds": 30,
+		//		"Region": "orders"
+		//	}
+		//},
 		{
-			"UpstreamPathTemplate": "/gateway/Orders/",
-			"DownstreamPathTemplate": "/api/Orders",
+			"DownstreamPathTemplate": "/api/orders",
+			"DownstreamScheme": "http",
 			"DownstreamHostAndPorts": [
 				{
 					"Host": "ordersmicroservice.api",
 					"Port": 8080
 				}
 			],
-			/* http://localhost:5000/gateway/Orders to http://ordersmicroservice.api:8080/api/Orders */
-			"UpstreamHttpMethod": [
-				"Get",
-				"Post",
-				"Options"
-			],
-			"UpstreamScheme": "http",
-
-			"FileCacheOptions": {
-				"TtlSeconds": 30,
-				"Region": "orders"
-			}
+			"UpstreamPathTemplate": "/gateway/Orders",
+			"UpstreamHttpMethod": [ "Get" ]
 		},
-
 
 		{
 			"UpstreamPathTemplate": "/gateway/Orders/search/orderid/{orderID}/",
