@@ -1,16 +1,8 @@
 ﻿using BusinessLogicLayer.DTO;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.HttpClients
 {
@@ -29,7 +21,7 @@ namespace BusinessLogicLayer.HttpClients
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userID}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"/gateway/users/{userID}");
 
                 if (!response.IsSuccessStatusCode)
                 {

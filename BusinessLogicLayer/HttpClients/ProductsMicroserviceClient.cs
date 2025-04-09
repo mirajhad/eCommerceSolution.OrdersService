@@ -1,12 +1,8 @@
 ﻿using BusinessLogicLayer.DTO;
 using Microsoft.Extensions.Logging;
 using Polly.Bulkhead;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BusinessLogicLayer.HttpClients
 {
@@ -26,7 +22,7 @@ namespace BusinessLogicLayer.HttpClients
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"/api/products/search/product-id/{productID}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"/gateway/products/search/product-id/{productID}");
 
                 if (!response.IsSuccessStatusCode)
                 {

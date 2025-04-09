@@ -58,7 +58,7 @@ namespace BusinessLogicLayer.Policies
         public IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy()
         {
             var retryPolicy = _pollyPolicies.GetRetryPolicy(3);
-            var circuitBreakerPolicy = _pollyPolicies.GetCircuitBreakerPolicy(3, TimeSpan.FromSeconds(5));
+            var circuitBreakerPolicy = _pollyPolicies.GetCircuitBreakerPolicy(3, TimeSpan.FromMinutes(2));
             var timeoutPolicy = _pollyPolicies.GetTimeoutPolicy(TimeSpan.FromSeconds(5));
 
             AsyncPolicyWrap<HttpResponseMessage> wrappedPolicy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy);
