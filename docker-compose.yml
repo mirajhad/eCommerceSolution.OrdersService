@@ -20,6 +20,7 @@ services:
      - RABBITMQ_UserName=user
      - RABBITMQ_Password=password
      - RABBITMQ_Port=5672
+     - RabbitMQ_Products_Exchange=product.exchange
     ports:
      - "7000:8080"
     networks:
@@ -53,6 +54,7 @@ services:
     - RABBITMQ_UserName=user
     - RABBITMQ_Password=password
     - RABBITMQ_Port=5672
+    - RabbitMQ_Products_Exchange=product.exchange
    ports:
     - "6000:8080"
    networks:
